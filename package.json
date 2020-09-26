@@ -44,7 +44,9 @@
         ]
     },
     "devDependencies": {
+        "husky": "^4.3.0",
         "prettier": "^2.1.2",
-        "prettify": "^0.1.7"
+        "prettify": "^0.1.7",
+        "pretty-quick": "^3.0.2"
     }
 }
