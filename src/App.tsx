@@ -122,7 +122,7 @@ function App() {
     const initiateSocket = useCallback(
         (room: string, cb: Function) => {
             // socket = io("http://localhost:8000");
-            socket = io("http://1bcf78a50066.ngrok.io");
+            socket = io("https://1bcf78a50066.ngrok.io");
             console.log(`Connecting socket...`);
             if (socket && room) {
                 socket.emit("join", room);
