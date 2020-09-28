@@ -6,8 +6,12 @@ const Colors = ["red", "blue", "green", "yellow", "black"];
 
 export interface WhiteBoardProps {
     isDrawing: boolean;
-    onStartDrawing: ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
-    onDrawing: ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
+    onStartDrawing: ({
+        nativeEvent
+    }: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent<HTMLCanvasElement>) => void;
+    onDrawing: ({
+        nativeEvent
+    }: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent<HTMLCanvasElement>) => void;
     onFinishDrawing: () => void;
     pointerPos: { x: number; y: number };
     onColorChange: (color: string) => void;
@@ -118,6 +122,9 @@ const WhiteBoard = ({
                     onMouseDown={onStartDrawing}
                     onMouseUp={onFinishDrawing}
                     onMouseMove={onDrawing}
+                    onTouchStart={onStartDrawing}
+                    onTouchEnd={onFinishDrawing}
+                    onTouchMove={onDrawing}
                     ref={canvasRef}
                 />
             </div>
