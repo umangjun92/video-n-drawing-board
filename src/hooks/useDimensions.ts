@@ -18,7 +18,7 @@ export default (containerRef: RefObject<HTMLElement | null>) => {
             // return () =>  containerRef.current.removeEventListener("resize", handleResize);
             return () => x.disconnect();
         }
-    }, [containerRef.current]);
+    }, [containerRef]);
 
     return size;
 };
