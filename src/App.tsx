@@ -258,7 +258,7 @@ function App() {
                         <option value="Whiteboard">Whiteboard</option>
                     </select>
                 ) : (
-                    <div>Current mode: {roomInfo?.mode}</div>
+                    <div></div>
                 )}
             </div>
             {/* <h1>Live Chat:</h1> */}
