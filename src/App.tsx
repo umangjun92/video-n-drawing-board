@@ -298,15 +298,6 @@ function App() {
                     />
                 )}
             </div>
-            {/* <White /> */}
-            {/* <DrawingBoard
-                userId="user1" // identify for different players.
-                operations={operations}
-                onChange={(newOperation, afterOperation) => {
-                    console.log(`TODO: send`, newOperation);
-                    setOperations(afterOperation);
-                }}
-            /> */}
         </div>
     );
 }
