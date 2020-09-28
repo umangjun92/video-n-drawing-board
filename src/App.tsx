@@ -113,7 +113,6 @@ function App() {
     const [mode, setMode] = useState("Video");
 
     const [isDrawing, setIsDrawing] = useState(false);
-    const [startPos, setStartPos] = useState<WhiteBoardProps["startPos"]>({ x: 0, y: 0 });
     const [pointerPos, setPointerPos] = useState<WhiteBoardProps["pointerPos"]>({ x: 0, y: 0 });
     const [drawColor, setDrawColor] = useState("black");
 
@@ -294,7 +293,6 @@ function App() {
                         onDrawing={draw}
                         onFinishDrawing={finishDrawing}
                         pointerPos={pointerPos}
-                        startPos={startPos}
                         color={roomInfo?.drawColor || "black"}
                         onColorChange={onDrawColorChange}
                     />

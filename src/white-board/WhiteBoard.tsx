@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 
 import useDimensions from "../hooks/useDimensions";
 
@@ -9,7 +9,6 @@ export interface WhiteBoardProps {
     onStartDrawing: ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
     onDrawing: ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void;
     onFinishDrawing: () => void;
-    startPos: { x: number; y: number };
     pointerPos: { x: number; y: number };
     onColorChange: (color: string) => void;
     color: string;
@@ -20,7 +19,6 @@ const WhiteBoard = ({
     onStartDrawing,
     onDrawing,
     onFinishDrawing,
-    startPos,
     pointerPos,
     color,
     onColorChange
