@@ -100,6 +100,7 @@ interface RoomInfo {
     mode: "Video" | "Whiteboard";
     videoUrl: "string";
     videoPos: number;
+    drawColor: string;
     users: string[];
     chat: string[];
 }
@@ -118,6 +119,7 @@ function App() {
     const [isDrawing, setIsDrawing] = useState(false);
     const [startPos, setStartPos] = useState<WhiteBoardProps["startPos"]>({ x: 0, y: 0 });
     const [pointerPos, setPointerPos] = useState<WhiteBoardProps["pointerPos"]>({ x: 0, y: 0 });
+    const [drawColor, setDrawColor] = useState("black");
 
     const [selectedVideoUrl, setSelectedVideoUrl] = useState("");
     const [videoMode, setVideoMode] = useState<VideoScreenProps["videoMode"]>("selection");
@@ -150,6 +152,11 @@ function App() {
         const { offsetX, offsetY } = nativeEvent;
         // setPointerPos({ x: offsetX, y: offsetY });
         sendDrawingStroke(room, offsetX, offsetY);
+    };
+
+    const onDrawColorChange: WhiteBoardProps["onColorChange"] = (color) => {
+        setDrawColor(color);
+        socket.emit("roomInfoReceived", { ...roomInfo, drawColor });
     };
 
     const onSelectVideo: VideoScreenProps["onSelectVideo"] = (url) => {
@@ -292,6 +299,8 @@ function App() {
                         onFinishDrawing={finishDrawing}
                         pointerPos={pointerPos}
                         startPos={startPos}
+                        color={roomInfo?.drawColor || "black"}
+                        onColorChange={onDrawColorChange}
                     />
                 )}
             </div>
