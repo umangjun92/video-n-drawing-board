@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import io, { Socket } from "socket.io-client";
-import { Operation } from "react-drawing-board/lib/SketchPad";
-import DrawingBoard from "react-drawing-board";
 
 import "./App.css";
 import WhiteBoard, { WhiteBoardProps } from "./white-board/WhiteBoard";
-import White from "./white-board/White";
 import VideoScreen, { VideoScreenProps } from "./video/VideoScreen";
 
 let socket: typeof Socket;
@@ -113,7 +110,6 @@ function App() {
     const [userName, setUserName] = useState<string>("");
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState<any[]>([]);
-    const [operations, setOperations] = useState<Operation[]>([]);
     const [mode, setMode] = useState("Video");
 
     const [isDrawing, setIsDrawing] = useState(false);
