@@ -15,7 +15,7 @@ const VideoSelection = ({ onSelectVideo }: VideoSelectionProps) => {
             {videos.map((videoId, i) => (
                 <img
                     key={i}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", margin: "5px" }}
                     src={`http://img.youtube.com/vi/${videoId}/0.jpg`}
                     // src={videoId}
                     onClick={(e) => {
