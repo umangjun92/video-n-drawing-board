@@ -28,10 +28,10 @@ const WhiteBoard = ({
     useEffect(() => {
         const canvas = canvasRef.current;
         if (canvas) {
-            canvas.width = window.innerWidth * 2;
-            canvas.height = window.innerHeight * 2;
-            canvas.style.width = `${window.innerWidth}px`;
-            canvas.style.height = `${window.innerHeight}px`;
+            // canvas.width = window.innerWidth * 2;
+            // canvas.height = window.innerHeight * 2;
+            // canvas.style.width = `${window.innerWidth}px`;
+            // canvas.style.height = `${window.innerHeight}px`;
             const context = canvas.getContext("2d");
             if (context) {
                 context.scale(2, 2);
@@ -51,7 +51,7 @@ const WhiteBoard = ({
             canvas.height = containerHeight * 2;
             canvas.style.height = `${containerHeight}px`;
             canvas.width = containerWidth * 2;
-            canvas.style.width = `${containerWidth - 50}px`;
+            canvas.style.width = `${containerWidth}px`;
             const context = canvas.getContext("2d");
             if (context) {
                 context.scale(2, 2);
@@ -90,8 +90,8 @@ const WhiteBoard = ({
                 // height={containerHeight * 2}
                 // width={containerWidth * 2}
                 style={{
-                    border: "1px solid grey",
-                    margin: "15px"
+                    border: "1px solid grey"
+                    // margin: "15px"
                     // height: "400px",
                     // width: "400px"
                     // height: `${containerHeight}px`,
