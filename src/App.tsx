@@ -105,9 +105,9 @@ interface RoomInfo {
 }
 
 function App() {
-    const rooms = ["A", "B", "C"];
+    // const rooms = ["A", "B", "C"];
     const [connectionId, setConnectionId] = useState("");
-    const [room, setRoom] = useState(rooms[0]);
+    const [room, setRoom] = useState(window.location.pathname.slice(1));
     const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
     const [userName, setUserName] = useState<string>("");
     const [message, setMessage] = useState("");
@@ -160,6 +160,7 @@ function App() {
     // );
 
     useEffect(() => {
+        // setRoom(window.location.pathname.slice(1));
         room && roomInfo && setRoomInfo({ ...roomInfo, roomId: room });
         if (room) initiateSocket(room, (id: string) => setConnectionId(id));
 
@@ -197,7 +198,7 @@ function App() {
         console.log("room info changes", roomInfo);
         const onAskRoomInfo = () => {
             console.log("askRoomInfo", roomInfo);
-            socket.emit("roomInfoReceived", roomInfo || { roomId: "A" });
+            socket.emit("roomInfoReceived", roomInfo || { roomId: room });
         };
 
         socket.on("askRoomInfo", onAskRoomInfo);
@@ -227,42 +228,40 @@ function App() {
             socket.emit("roomInfoReceived", { ...roomInfo, mode });
         }
     }, [mode]);
-    useEffect(() => {
-        console.log("isDrawing", pointerPos);
-    }, [pointerPos]);
+
     return (
-        <div className="App" style={{ height: "100%" }}>
-            <h1>Room: {room}</h1>
-            {rooms.map((r, i) => (
-                <button onClick={() => setRoom(r)} key={i}>
-                    {r}
-                </button>
-            ))}
-            {roomInfo?.host === connectionId ? (
-                <select onChange={(e) => setMode(e.target.value)} value={mode}>
-                    <option value="Video">Video</option>
-                    <option value="WhiteBoard">WhiteBoard</option>
-                </select>
-            ) : (
-                <div>Current mode: {roomInfo?.mode}</div>
-            )}
-            {/* <div>{roomInfo?.host + " " + connectionId}</div> */}
-            <div>{roomInfo?.host === connectionId ? "You are the Host" : "You are not the host"}</div>
-            <h2>{roomInfo?.users?.length}</h2>
+        <div className="App" style={{ height: "100%", padding: "10px" }}>
+            <h4>Room: {room}</h4>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                    <div># of connections: {roomInfo?.users?.length}</div>
+                    <div>{roomInfo?.host === connectionId ? "You are the Host" : "You are not the host"}</div>
+                </div>
+                {roomInfo?.host === connectionId ? (
+                    <select onChange={(e) => setMode(e.target.value)} value={mode}>
+                        <option value="Video">Video</option>
+                        <option value="WhiteBoard">WhiteBoard</option>
+                    </select>
+                ) : (
+                    <div>Current mode: {roomInfo?.mode}</div>
+                )}
+            </div>
             {/* <h1>Live Chat:</h1> */}
             {/* <input type="text" name="msg" value={message} onChange={(e) => setMessage(e.target.value)} />
             <button onClick={() => sendMessage(room, message)}>Send</button> */}
             {/* {chat.map((m: any, i) => (
                 <p key={i}>{m}</p>
             ))} */}
-            <WhiteBoard
-                isDrawing={isDrawing}
-                onStartDrawing={startDrawing}
-                onDrawing={draw}
-                onFinishDrawing={finishDrawing}
-                pointerPos={pointerPos}
-                startPos={startPos}
-            />
+            <div style={{ marginTop: "10px" }}>
+                <WhiteBoard
+                    isDrawing={isDrawing}
+                    onStartDrawing={startDrawing}
+                    onDrawing={draw}
+                    onFinishDrawing={finishDrawing}
+                    pointerPos={pointerPos}
+                    startPos={startPos}
+                />
+            </div>
             {/* <White /> */}
             {/* <DrawingBoard
                 userId="user1" // identify for different players.
