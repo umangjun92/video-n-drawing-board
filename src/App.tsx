@@ -133,7 +133,7 @@ function App() {
     );
 
     const startDrawing: WhiteBoardProps["onStartDrawing"] = ({ nativeEvent }) => {
-        const { offsetX, offsetY } = nativeEvent;
+        const { offsetX, offsetY } = nativeEvent as any;
         // setPointerPos({ x: offsetX, y: offsetY });
         // setIsDrawing(true);
         dispatchStartDrawing(room, offsetX, offsetY);
@@ -144,8 +144,8 @@ function App() {
         dispatchFinishDrawing(room);
     };
 
-    const draw: WhiteBoardProps["onDrawing"] = ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        const { offsetX, offsetY } = nativeEvent;
+    const draw: WhiteBoardProps["onDrawing"] = ({ nativeEvent }) => {
+        const { offsetX, offsetY } = nativeEvent as any;
         // setPointerPos({ x: offsetX, y: offsetY });
         sendDrawingStroke(room, offsetX, offsetY);
     };
