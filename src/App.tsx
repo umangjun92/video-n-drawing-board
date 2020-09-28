@@ -5,8 +5,8 @@ import DrawingBoard from "react-drawing-board";
 
 import "./App.css";
 import WhiteBoard, { WhiteBoardProps } from "./white-board/WhiteBoard";
-import { start } from "repl";
 import White from "./white-board/White";
+import VideoScreen, { VideoScreenProps } from "./video/VideoScreen";
 
 let socket: typeof Socket;
 
@@ -97,8 +97,8 @@ export const dispatchFinishDrawing = (roomId: string) => {
 interface RoomInfo {
     roomId: string;
     host: string;
-    mode: "video" | "whiteboard";
-    videoURL: "string";
+    mode: "Video" | "Whiteboard";
+    videoUrl: "string";
     videoPos: number;
     users: string[];
     chat: string[];
@@ -113,11 +113,14 @@ function App() {
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState<any[]>([]);
     const [operations, setOperations] = useState<Operation[]>([]);
-    const [mode, setMode] = useState("v");
+    const [mode, setMode] = useState("Video");
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [startPos, setStartPos] = useState<WhiteBoardProps["startPos"]>({ x: 0, y: 0 });
     const [pointerPos, setPointerPos] = useState<WhiteBoardProps["pointerPos"]>({ x: 0, y: 0 });
+
+    const [selectedVideoUrl, setSelectedVideoUrl] = useState("");
+    const [videoMode, setVideoMode] = useState<VideoScreenProps["videoMode"]>("selection");
 
     const initiateSocket = useCallback(
         (room: string, cb: Function) => {
@@ -147,6 +150,11 @@ function App() {
         const { offsetX, offsetY } = nativeEvent;
         // setPointerPos({ x: offsetX, y: offsetY });
         sendDrawingStroke(room, offsetX, offsetY);
+    };
+
+    const onSelectVideo: VideoScreenProps["onSelectVideo"] = (url) => {
+        setSelectedVideoUrl(url);
+        setVideoMode("player");
     };
 
     // const subscribeForRoomInfo = useCallback(
@@ -203,9 +211,10 @@ function App() {
 
         socket.on("askRoomInfo", onAskRoomInfo);
 
-        if (roomInfo?.host === connectionId) {
-            setMode(roomInfo.mode);
-        }
+        // if (roomInfo?.host === connectionId) {
+        roomInfo && setMode(roomInfo.mode);
+        roomInfo?.videoUrl && setSelectedVideoUrl(roomInfo.videoUrl);
+        // }
 
         setChat(roomInfo?.chat || []);
 
@@ -229,6 +238,12 @@ function App() {
         }
     }, [mode]);
 
+    useEffect(() => {
+        if (roomInfo?.host === connectionId) {
+            socket.emit("roomInfoReceived", { ...roomInfo, videoUrl: selectedVideoUrl });
+        }
+    }, [selectedVideoUrl]);
+
     return (
         <div className="App" style={{ height: "100%", padding: "10px" }}>
             <h4>Room: {room}</h4>
@@ -240,7 +255,7 @@ function App() {
                 {roomInfo?.host === connectionId ? (
                     <select onChange={(e) => setMode(e.target.value)} value={mode}>
                         <option value="Video">Video</option>
-                        <option value="WhiteBoard">WhiteBoard</option>
+                        <option value="Whiteboard">Whiteboard</option>
                     </select>
                 ) : (
                     <div>Current mode: {roomInfo?.mode}</div>
@@ -253,14 +268,32 @@ function App() {
                 <p key={i}>{m}</p>
             ))} */}
             <div style={{ marginTop: "10px" }}>
-                <WhiteBoard
-                    isDrawing={isDrawing}
-                    onStartDrawing={startDrawing}
-                    onDrawing={draw}
-                    onFinishDrawing={finishDrawing}
-                    pointerPos={pointerPos}
-                    startPos={startPos}
-                />
+                {mode !== "Whiteboard" ? (
+                    // <div>
+                    /* <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" />
+                        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" />
+                        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" /> */
+                    <VideoScreen
+                        onSelectVideo={onSelectVideo}
+                        selectedVideoUrl={roomInfo?.videoUrl || ""}
+                        isHost={roomInfo?.host === connectionId}
+                        videoMode={videoMode}
+                        onClickBackToSelection={() => {
+                            setVideoMode("selection");
+                            setSelectedVideoUrl("");
+                        }}
+                    />
+                ) : (
+                    // </div>
+                    <WhiteBoard
+                        isDrawing={isDrawing}
+                        onStartDrawing={startDrawing}
+                        onDrawing={draw}
+                        onFinishDrawing={finishDrawing}
+                        pointerPos={pointerPos}
+                        startPos={startPos}
+                    />
+                )}
             </div>
             {/* <White /> */}
             {/* <DrawingBoard
