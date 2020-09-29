@@ -61,8 +61,8 @@ export const subscribeToStartDrawing = (cb: Function) => {
 
 export const subscribeToDrawing = (cb: Function) => {
     if (!socket) return true;
-    socket.on("drawing", ({ xPos, yPos }: any) => {
-        return cb(null, { xPos, yPos });
+    socket.on("drawing", ({ xPos, yPos, color }: any) => {
+        return cb(null, { xPos, yPos, color });
     });
 };
 
@@ -79,9 +79,9 @@ export const dispatchStartDrawing = (roomId: string, xPos: number, yPos: number,
     }
 };
 
-export const sendDrawingStroke = (roomId: string, xPos: number, yPos: number) => {
+export const sendDrawingStroke = (roomId: string, xPos: number, yPos: number, color: string) => {
     if (socket) {
-        socket.emit("drawing", { roomId, xPos, yPos });
+        socket.emit("drawing", { roomId, xPos, yPos, color });
     }
 };
 
@@ -146,7 +146,7 @@ function App() {
     const draw: WhiteBoardProps["onDrawing"] = ({ nativeEvent }) => {
         const { offsetX, offsetY } = nativeEvent as any;
         // setPointerPos({ x: offsetX, y: offsetY });
-        sendDrawingStroke(room, offsetX, offsetY);
+        sendDrawingStroke(room, offsetX, offsetY, drawColor);
     };
 
     const onDrawColorChange: WhiteBoardProps["onColorChange"] = (color) => {

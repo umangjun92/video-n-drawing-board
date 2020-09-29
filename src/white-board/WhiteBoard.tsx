@@ -103,6 +103,7 @@ const WhiteBoard = ({
     useEffect(() => {
         if (contextRef.current && isDrawing) {
             const { x, y } = pointerPos;
+            contextRef.current.strokeStyle = currentStrokeColor;
             contextRef.current.lineTo(x, y);
             contextRef.current.stroke();
         }
