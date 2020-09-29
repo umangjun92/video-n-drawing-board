@@ -13,6 +13,7 @@ export interface WhiteBoardProps {
         nativeEvent
     }: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent<HTMLCanvasElement>) => void;
     onFinishDrawing: () => void;
+    currentStrokeColor: string;
     pointerPos: { x: number; y: number };
     onColorChange: (color: string) => void;
     color: string;
@@ -25,7 +26,8 @@ const WhiteBoard = ({
     onFinishDrawing,
     pointerPos,
     color,
-    onColorChange
+    onColorChange,
+    currentStrokeColor
 }: WhiteBoardProps) => {
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,6 +89,7 @@ const WhiteBoard = ({
     useEffect(() => {
         if (contextRef.current) {
             if (isDrawing) {
+                contextRef.current.strokeStyle = currentStrokeColor;
                 contextRef.current.beginPath();
                 const { x, y } = pointerPos;
                 contextRef.current.moveTo(x, y);
