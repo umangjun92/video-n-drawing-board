@@ -7,14 +7,14 @@ import VideoScreen, { VideoScreenProps } from "./video/VideoScreen";
 
 let socket: typeof Socket;
 
-export const initiateSocket = (room: string, roomInfo: RoomInfo | null, cb: Function) => {
-    socket = io("http://localhost:8000");
-    console.log(`Connecting socket...`);
-    if (socket && room) {
-        socket.emit("join", room);
-        cb(null, socket.id);
-    }
-};
+// export const initiateSocket = (room: string, roomInfo: RoomInfo | null, cb: Function) => {
+//     socket = io("http://localhost:8000");
+//     console.log(`Connecting socket...`);
+//     if (socket && room) {
+//         socket.emit("join", room);
+//         cb(null, socket.id);
+//     }
+// };
 export const onConnected = (cb: Function) => {
     socket.on("connected", (id: string) => {
         cb(null, id);
@@ -54,8 +54,8 @@ export const sendMessage = (room: string, message: any) => {
 
 export const subscribeToStartDrawing = (cb: Function) => {
     if (!socket) return true;
-    socket.on("startDrawing", ({ xPos, yPos }: any) => {
-        return cb(null, { xPos, yPos });
+    socket.on("startDrawing", ({ xPos, yPos, color }: any) => {
+        return cb(null, { xPos, yPos, color });
     });
 };
 
@@ -73,9 +73,9 @@ export const subscribeToFinishDrawing = (cb: Function) => {
     });
 };
 
-export const dispatchStartDrawing = (roomId: string, xPos: number, yPos: number) => {
+export const dispatchStartDrawing = (roomId: string, xPos: number, yPos: number, color: string) => {
     if (socket) {
-        socket.emit("startDrawing", { roomId, xPos, yPos });
+        socket.emit("startDrawing", { roomId, xPos, yPos, color });
     }
 };
 
@@ -97,7 +97,6 @@ interface RoomInfo {
     mode: "Video" | "Whiteboard";
     videoUrl: "string";
     videoPos: number;
-    drawColor: string;
     users: string[];
     chat: string[];
 }
@@ -115,14 +114,14 @@ function App() {
     const [isDrawing, setIsDrawing] = useState(false);
     const [pointerPos, setPointerPos] = useState<WhiteBoardProps["pointerPos"]>({ x: 0, y: 0 });
     const [drawColor, setDrawColor] = useState("black");
-
+    const [currentStrokeColor, setCurrentStrokeColor] = useState("black");
     const [selectedVideoUrl, setSelectedVideoUrl] = useState("");
     const [videoMode, setVideoMode] = useState<VideoScreenProps["videoMode"]>("selection");
 
     const initiateSocket = useCallback(
         (room: string, cb: Function) => {
-            // socket = io("http://localhost:8000");
-            socket = io("https://1bcf78a50066.ngrok.io");
+            // socket = io("http://localhost:8080");
+            socket = io("https://66f64146fb39.ngrok.io");
             console.log(`Connecting socket...`);
             if (socket && room) {
                 socket.emit("join", room);
@@ -136,7 +135,7 @@ function App() {
         const { offsetX, offsetY } = nativeEvent as any;
         // setPointerPos({ x: offsetX, y: offsetY });
         // setIsDrawing(true);
-        dispatchStartDrawing(room, offsetX, offsetY);
+        dispatchStartDrawing(room, offsetX, offsetY, drawColor);
     };
 
     const finishDrawing: WhiteBoardProps["onFinishDrawing"] = () => {
@@ -152,7 +151,7 @@ function App() {
 
     const onDrawColorChange: WhiteBoardProps["onColorChange"] = (color) => {
         setDrawColor(color);
-        socket.emit("roomInfoReceived", { ...roomInfo, drawColor });
+        // socket.emit("roomInfoReceived", { ...roomInfo, drawColor });
     };
 
     const onSelectVideo: VideoScreenProps["onSelectVideo"] = (url) => {
@@ -188,9 +187,10 @@ function App() {
                 return { ...state, ..._roomInfo, roomId: room };
             });
         });
-        subscribeToStartDrawing((err: any, { xPos, yPos }: any) => {
+        subscribeToStartDrawing((err: any, { xPos, yPos, color }: any) => {
             setIsDrawing(true);
             setPointerPos({ x: xPos, y: yPos });
+            setCurrentStrokeColor(color);
         });
         subscribeToDrawing((err: any, { xPos, yPos }: any) => {
             setPointerPos({ x: xPos, y: yPos });
@@ -294,8 +294,9 @@ function App() {
                         onDrawing={draw}
                         onFinishDrawing={finishDrawing}
                         pointerPos={pointerPos}
-                        color={roomInfo?.drawColor || "black"}
+                        color={drawColor}
                         onColorChange={onDrawColorChange}
+                        currentStrokeColor={currentStrokeColor}
                     />
                 )}
             </div>
